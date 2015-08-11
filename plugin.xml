@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="cordova-umeng-analytics"
+      version="0.0.1">
+
+    <name>CordovaUmengAnalytics</name>
+    <description>cordova umeng analytics Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,umeng,analytics</keywords>
+    <repo>https://github.com/tomsean/cordova-umeng-analytics.git</repo>
+    <issue>https://github.com/tomsean/cordova-umeng-analytics/issues</issue>
+
+    <engines>
+      <engine name="cordova" version=">=3.1.0" />
+    </engines>
+    <js-module src="www/UmengAnalytics.js" name="UmengAnalytics">
+        <clobbers target="window.plugins.umengAnalytics"/>
+    </js-module>
+    <!-- android -->
+    <platform name="android">
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="UmengAnalytics">
+                <param name="android-package" value="com.laoxc.cordova.umenganalytics.UmengAnalytics"/>
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+            <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+        </config-file>
+        <source-file src="src/android/UmengAnalytics.java" target-dir="src/com/laoxc/cordova/umenganalytics"/>
+        <source-file src="src/android/lib/umeng-analytics-v5.5.3.jar" target-dir="libs"/>
+    </platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="UmengAnalytics">
+                <param name="ios-package" value="CDVUmengAnalytics"/>
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        <header-file src="src/ios/Plugins/CDVUmengAnalytics.h"/>
+        <source-file src="src/ios/Plugins/CDVUmengAnalytics.m"/>
+        <header-file src="src/ios/lib/MobClick.h" />
+        <header-file src="src/ios/lib/MobClickSocialAnalytics.h" />
+        <source-file src="src/ios/lib/libMobClickLibrary.a" framework="true" />
+    </platform>
+</plugin>
