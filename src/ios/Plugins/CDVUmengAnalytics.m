@@ -7,10 +7,38 @@
     return [self.commandDelegate.settings objectForKey:[key lowercaseString]];
 }
 
+- (id)settingForKey:(NSString*)key withDefault:(NSString*)def
+{
+    NSString* value= [self.commandDelegate.settings objectForKey:[key lowercaseString]];
+    if (!value) {
+        value=def;
+    }
+    return value;
+}
+
 - (void)pluginInitialize
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     
+}
+
+- (void)onPageStart:(CDVInvokedUrlCommand*)command{
+    NSString* pageName=[self getPageName:command ];
+    [MobClick beginLogPageView:pageName];
+
+}
+
+- (void)onPageEnd:(CDVInvokedUrlCommand*)command{
+    NSString* pageName=[self getPageName:command ];
+   [MobClick endLogPageView:pageName];
+}
+
+- (id)getPageName:(CDVInvokedUrlCommand*)command{
+    NSString* pageName=command.arguments[0];
+    if (!pageName||pageName.length<=0) {
+        pageName=@"umeng_unknown_page";
+    }
+    return pageName;
 }
 
 - (void)finishLaunching:(NSNotification *)notification
@@ -36,6 +64,18 @@
     [MobClick startWithAppkey:appkey reportPolicy:BATCH   channelId:channelId];
     [MobClick updateOnlineConfig];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onlineConfigCallBack:) name:UMOnlineConfigDidFinishedNotification object:nil];
+    setting=@"UmengAutoUpdate";
+    if ([self settingForKey:setting]) {
+        BOOL autoUpdate=[[self settingForKey:setting] boolValue];
+        if (autoUpdate) {
+             NSString* updateTitle=[self settingForKey:@"UMENG_UPDATE_TITLE" withDefault:@"New version"];
+             NSString* updateYes=[self settingForKey:@"UMENG_UPDATE_YES" withDefault:@"Goto Store"];
+             NSString* updateNo=[self settingForKey:@"UMENG_UPDATE_NO" withDefault:@"Skip"];
+             [MobClick checkUpdate:updateTitle cancelButtonTitle:updateNo otherButtonTitles:updateYes];
+        }
+    }
+    
+
 }
 
 - (void)onlineConfigCallBack:(NSNotification *)note {

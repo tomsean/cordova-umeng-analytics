@@ -1,7 +1,7 @@
 package com.laoxc.cordova.umenganalytics;
 
-import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
@@ -11,27 +11,70 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONException;
 
 public class UmengAnalytics extends CordovaPlugin {
+    private String mainPageName = "Cordova_Main";
+
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        boolean debugMode=preferences.getBoolean("UmengAnalyticsDebugMode",false);
-        MobclickAgent.setDebugMode( debugMode );
-        String appKey=preferences.getString("UMENG_APPKEY",null);
-        String channel=preferences.getString("UMENG_CHANNEL",null);
-        AnalyticsConfig.setAppkey(appKey);
-        AnalyticsConfig.setChannel(channel);
+        boolean debugMode = preferences.getBoolean("UmengAnalyticsDebugMode", false);
+        MobclickAgent.setDebugMode(debugMode);
+        MobclickAgent.openActivityDurationTrack(false);
         MobclickAgent.updateOnlineConfig(this.cordova.getActivity());
+        boolean umengAutoUpdate = preferences.getBoolean("UmengAutoUpdate", false);
+        if (umengAutoUpdate) {
+            UmengUpdateAgent.update(this.cordova.getActivity());
+        }
     }
+
     @Override
     public boolean execute(String action, CordovaArgs args, final CallbackContext callbackContext) throws JSONException {
-       return false;
+        if ("onPageStart".equals(action)) {
+            onPageStart(args, callbackContext);
+            return true;
+        } else if ("onPageEnd".equals(action)) {
+            onPageEnd(args, callbackContext);
+            return true;
+        }
+        return false;
     }
+
+    public void onPageStart(final CordovaArgs args, final CallbackContext callbackContext) throws JSONException {
+        final String pageName = getPageName(args);
+        this.cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MobclickAgent.onPageStart(pageName);
+            }
+        });
+    }
+
+    public void onPageEnd(CordovaArgs args, final CallbackContext callbackContext) throws JSONException {
+        final String pageName = getPageName(args);
+        this.cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MobclickAgent.onPageEnd(pageName);
+            }
+        });
+    }
+
+    private String getPageName(CordovaArgs args) throws JSONException {
+        String pageName = args.getString(0);
+        if (pageName == null || pageName.length() <= 0) {
+            pageName = "umeng_unknown_page";
+        }
+        return pageName;
+    }
+
     @Override
     public void onPause(boolean multitasking) {
+        MobclickAgent.onPageStart(mainPageName);
         MobclickAgent.onPause(this.cordova.getActivity());
     }
+
     @Override
     public void onResume(boolean multitasking) {
+        MobclickAgent.onPageStart(mainPageName);
         MobclickAgent.onResume(this.cordova.getActivity());
     }
 }

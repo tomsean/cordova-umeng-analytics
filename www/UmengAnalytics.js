@@ -13,6 +13,12 @@ UmengAnalytics.prototype = {
     },
     setDebugMode:function(model){
         exec(null, null,'UmengAnalytics','setDebugMode',[model]);
+    },
+    onPageStart:function(pageName){
+        exec(null, null,'UmengAnalytics','onPageStart',[pageName]);
+    },
+    onPageEnd:function(pageName){
+        exec(null, null,'UmengAnalytics','onPageEnd',[pageName]);
     }
 }
 
