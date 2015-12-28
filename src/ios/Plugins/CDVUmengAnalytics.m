@@ -62,24 +62,7 @@
     channelId=[self settingForKey:setting];
     [MobClick setAppVersion:XcodeAppVersion];
     [MobClick startWithAppkey:appkey reportPolicy:BATCH   channelId:channelId];
-    [MobClick updateOnlineConfig];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onlineConfigCallBack:) name:UMOnlineConfigDidFinishedNotification object:nil];
-    setting=@"UmengAutoUpdate";
-    if ([self settingForKey:setting]) {
-        BOOL autoUpdate=[[self settingForKey:setting] boolValue];
-        if (autoUpdate) {
-             NSString* updateTitle=[self settingForKey:@"UMENG_UPDATE_TITLE" withDefault:@"New version"];
-             NSString* updateYes=[self settingForKey:@"UMENG_UPDATE_YES" withDefault:@"Goto Store"];
-             NSString* updateNo=[self settingForKey:@"UMENG_UPDATE_NO" withDefault:@"Skip"];
-             [MobClick checkUpdate:updateTitle cancelButtonTitle:updateNo otherButtonTitles:updateYes];
-        }
-    }
-    
 
 }
 
-- (void)onlineConfigCallBack:(NSNotification *)note {
-    
-    NSLog(@"online config has fininshed and note = %@", note.userInfo);
-}
 @end
