@@ -61,11 +61,11 @@
                     android:name="com.umeng.update.UpdateDialogActivity"
                     android:theme="@android:style/Theme.Translucent.NoTitleBar" >
             </activity>
-            <meta-data android:value="you appkey" android:name="UMENG_APPKEY"/>
-            <meta-data android:value="you channel" android:name="UMENG_CHANNEL"/>
+            <meta-data android:value="${UMENG_APPKEY_VALUE}" android:name="UMENG_APPKEY"/>
+            <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
         </config-file>
         <source-file src="src/android/UmengAnalytics.java" target-dir="src/com/laoxc/cordova/umenganalytics"/>
-        <source-file src="src/android/lib/umeng-analytics-v5.5.3.jar" target-dir="libs"/>
+        <source-file src="src/android/lib/umeng-analytics-v5.6.4.jar" target-dir="libs"/>
 
         <source-file src="src/android/lib/umeng-update-v2.6.0.1.jar" target-dir="libs"/>
         <source-file src="src/android/lib/armeabi/libbspatch.so" target-dir="libs/armeabi"/>
